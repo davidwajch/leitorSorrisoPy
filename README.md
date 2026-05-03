@@ -1,16 +1,39 @@
+# Leitor de sorriso (OpenCV + Arduino)
+
+Detecção de sorrisos em tempo real com **OpenCV** e acionamento de um **LED via Arduino** (porta serial). Útil como demonstração de visão computacional + integração com hardware.
+
+## Como rodar (Python)
+
+```bash
+python -m venv .venv
+# Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+Edite `leitorSorriso.py` e ajuste a porta serial (`COM3` no Windows; no Linux algo como `/dev/ttyUSB0`). Execute:
+
+```bash
+python leitorSorriso.py
+```
+
+Carregue o sketch `arduino.ino` no Arduino pela IDE oficial.
+
+---
+
+## Documentação original
+
 Este projeto tem como objetivo detectar sorrisos em tempo real usando a biblioteca OpenCV, que é uma biblioteca de visão computacional de código aberto, e um Arduino para controlar um LED. Quando um sorriso é detectado, o programa envia um sinal serial ao Arduino para acender o LED.
 
-Requisitos:
+### Requisitos
 
-Python 3
-Bibliotecas OpenCV e Serial
-Arduino
-Arduino IDE
-Webcam
+- Python 3
+- OpenCV e pyserial (`pip install -r requirements.txt`)
+- Arduino e Arduino IDE
+- Webcam
 
-Instalação:
+### Instalação
 
-Instale a biblioteca OpenCV e Serial utilizando o pip.
+Instale as dependências com pip (veja acima).
 Conecte o Arduino.
 Execute o código Python no terminal.
 Compile e envie o código do Arduino para o microcontrolador.
@@ -47,3 +70,7 @@ O loop continua indefinidamente.
 Conclusão:
 
 Este projeto demonstra como é possível usar a biblioteca OpenCV para detectar sorrisos em tempo real e controlar um dispositivo externo usando um microcontrolador Arduino.
+
+## Licença
+
+Veja [LICENSE](LICENSE).

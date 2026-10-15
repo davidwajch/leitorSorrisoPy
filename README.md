@@ -1,76 +1,77 @@
-# Leitor de sorriso (OpenCV + Arduino)
+# Leitor de Sorriso
 
-Detecção de sorrisos em tempo real com **OpenCV** e acionamento de um **LED via Arduino** (porta serial). Útil como demonstração de visão computacional + integração com hardware.
+Detector de sorrisos em tempo real que aciona um LED no Arduino quando detecta uma pessoa sorrindo. Projeto de integração entre visão computacional (OpenCV) e hardware.
 
-## Como rodar (Python)
+## O que faz
+
+O programa captura frames da webcam, detecta rostos e sorrisos usando classificadores Haar Cascade do OpenCV, e envia comandos via serial para o Arduino acender/apagar um LED quando detecta sorriso.
+
+## Stack
+
+- **Python 3**: OpenCV para detecção facial, pyserial para comunicação serial
+- **Arduino**: sketch simples que lê comandos da serial e controla o LED no pino 13
+- **Hardware**: Arduino Uno (ou compatível), LED, webcam
+
+## Como rodar
+
+### 1. Setup Python
 
 ```bash
 python -m venv .venv
-# Windows: .venv\Scripts\activate
+source .venv/bin/activate  # Linux/Mac
+# .venv\Scripts\activate   # Windows
+
 pip install -r requirements.txt
 ```
 
-Edite `leitorSorriso.py` e ajuste a porta serial (`COM3` no Windows; no Linux algo como `/dev/ttyUSB0`). Execute:
+### 2. Configurar Arduino
+
+1. Conecte o Arduino via USB
+2. Identifique a porta serial:
+   - **Windows**: geralmente `COM3`, `COM4`, etc (veja no Gerenciador de Dispositivos)
+   - **Linux/Mac**: geralmente `/dev/ttyUSB0` ou `/dev/ttyACM0` (use `ls /dev/tty*`)
+3. Abra `leitorSorriso.py` e ajuste a linha 9:
+   ```python
+   serialCom = serial.Serial('COM3', 9600)  # Trocar COM3 pela sua porta
+   ```
+4. Carregue o sketch `arduino.ino` no Arduino pela IDE oficial
+
+### 3. Rodar
 
 ```bash
 python leitorSorriso.py
 ```
 
-Carregue o sketch `arduino.ino` no Arduino pela IDE oficial.
+Pressione `q` para sair.
 
----
+## Estrutura
 
-## Documentação original
+```
+.
+├── leitorSorriso.py    # Script principal (captura, detecção, comunicação serial)
+├── arduino.ino         # Sketch Arduino (recebe "on"/"off" e controla LED)
+├── requirements.txt    # Dependências Python
+├── video.mp4           # Vídeo de demonstração
+└── README.md
+```
 
-Este projeto tem como objetivo detectar sorrisos em tempo real usando a biblioteca OpenCV, que é uma biblioteca de visão computacional de código aberto, e um Arduino para controlar um LED. Quando um sorriso é detectado, o programa envia um sinal serial ao Arduino para acender o LED.
+## Como funciona
 
-### Requisitos
+1. Captura frame da webcam
+2. Converte para escala de cinza
+3. Detecta rostos com `haarcascade_frontalface_default.xml`
+4. Para cada rosto detectado, busca sorrisos com `haarcascade_smile.xml`
+5. Se detectar sorriso, envia `"on"` pela serial; caso contrário, envia `"off"`
+6. Arduino lê o comando e liga/desliga o LED no pino 13
 
-- Python 3
-- OpenCV e pyserial (`pip install -r requirements.txt`)
-- Arduino e Arduino IDE
-- Webcam
+## Melhorias futuras
 
-### Instalação
-
-Instale as dependências com pip (veja acima).
-Conecte o Arduino.
-Execute o código Python no terminal.
-Compile e envie o código do Arduino para o microcontrolador.
-
-Funcionamento:
-
-O programa inicia capturando os frames da webcam e transformando-os em imagens em escala de cinza. Em seguida, a biblioteca OpenCV é usada para detectar rostos e sorrisos na imagem. Quando um sorriso é detectado, o status é atualizado para "on" e enviado ao Arduino através da porta serial. O LED é ligado quando o Arduino recebe o status "on" e desligado quando recebe o status "off".
-
-Código Python:
-
-A biblioteca cv2 é importada para usar as funções de detecção de rostos e sorrisos.
-A biblioteca serial é importada para enviar o status para o Arduino.
-A câmera é inicializada e aberta para capturar os frames.
-O loop principal começa.
-Os frames são capturados e transformados em escala de cinza.
-A função detectMultiScale é usada para detectar rostos na imagem.
-Dentro do loop de detecção de rostos, a função detectMultiScale é usada novamente para detectar sorrisos em cada rosto.
-Quando um sorriso é detectado, o status é atualizado para "on".
-O status é enviado para o Arduino através da porta serial e o LED é ligado ou desligado de acordo com o status.
-A imagem com as caixas delimitadoras dos rostos e sorrisos é exibida.
-O loop continua até que a tecla 'q' seja pressionada.
-
-Código Arduino:
-
-A biblioteca Serial é importada para receber o status do Python.
-O LED é configurado como uma saída.
-O loop principal começa.
-O Arduino aguarda a recepção de dados pela porta serial.
-Quando os dados são recebidos, eles são armazenados em uma variável de string.
-Se a variável for igual a "on", o LED é ligado.
-Se a variável for igual a "off", o LED é desligado.
-O loop continua indefinidamente.
-
-Conclusão:
-
-Este projeto demonstra como é possível usar a biblioteca OpenCV para detectar sorrisos em tempo real e controlar um dispositivo externo usando um microcontrolador Arduino.
+- [ ] Adicionar logs para debug da comunicação serial
+- [ ] Permitir configurar porta serial via argumento CLI ou arquivo de config
+- [ ] Calibrar parâmetros de detecção (scaleFactor, minNeighbors) para reduzir falsos positivos
+- [ ] Adicionar testes para validar detecção em diferentes condições de iluminação
+- [ ] Gravar vídeos de exemplo com detecções bem-sucedidas
 
 ## Licença
 
-Veja [LICENSE](LICENSE).
+MIT - veja [LICENSE](LICENSE)
